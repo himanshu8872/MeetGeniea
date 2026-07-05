@@ -5,11 +5,12 @@ import com.meetgenie.backend.entity.User;
 import com.meetgenie.backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import com.meetgenie.backend.dto.ApiResponse;
+import com.meetgenie.backend.exception.EmailAlreadyExistsException;
 
 import java.time.LocalDateTime;
 
 @Service
-public class UserService {
+public class    UserService {
 
     private final UserRepository userRepository;
 
@@ -20,7 +21,7 @@ public class UserService {
     public ApiResponse register(RegisterRequest request) {
 
         if (userRepository.existsByEmail(request.getEmail())) {
-            return new ApiResponse(false, "Email already exists!");
+            throw new EmailAlreadyExistsException("Email already exists!");
         }
 
         User user = new User();
