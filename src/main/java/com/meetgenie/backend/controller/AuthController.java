@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.meetgenie.backend.dto.LoginRequest;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -27,5 +28,14 @@ public class AuthController {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(response);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<ApiResponse> login(
+            @Valid @RequestBody LoginRequest request) {
+
+        ApiResponse response = userService.login(request);
+
+        return ResponseEntity.ok(response);
     }
 }

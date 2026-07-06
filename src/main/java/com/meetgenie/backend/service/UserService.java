@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import com.meetgenie.backend.dto.ApiResponse;
 import com.meetgenie.backend.exception.EmailAlreadyExistsException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import com.meetgenie.backend.dto.LoginRequest;
+import com.meetgenie.backend.exception.InvalidCredentialsException;
 
 import java.time.LocalDateTime;
 
@@ -40,5 +42,19 @@ public class    UserService {
         userRepository.save(user);
 
         return new ApiResponse(true, "User registered successfully!");
+    }
+
+    public ApiResponse login(LoginRequest request) {
+
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() ->
+                        new InvalidCredentialsException("Invalid email or password"));
+
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new InvalidCredentialsException("Invalid email or password");
+        }
+
+        return new ApiResponse(true, "Login successful");
+
     }
 }
