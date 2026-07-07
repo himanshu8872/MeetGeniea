@@ -11,6 +11,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.authority.AuthorityUtils;
+import com.meetgenie.backend.service.CustomUserDetailsService;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.IOException;
 
@@ -18,9 +20,14 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
+    private final CustomUserDetailsService userDetailsService;
 
-    public JwtAuthenticationFilter(JwtService jwtService) {
+    public JwtAuthenticationFilter(
+            JwtService jwtService,
+            CustomUserDetailsService userDetailsService) {
+
         this.jwtService = jwtService;
+        this.userDetailsService = userDetailsService;
     }
 
     @Override
@@ -39,17 +46,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 
         String token = authHeader.substring(7);
-
         String email = jwtService.extractEmail(token);
 
-        UsernamePasswordAuthenticationToken authentication =
-                new UsernamePasswordAuthenticationToken(
-                        email,
-                        null,
-                        AuthorityUtils.NO_AUTHORITIES
-                );
+        UserDetails userDetails =
+                userDetailsService.loadUserByUsername(email);
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        if (SecurityContextHolder.getContext().getAuthentication() == null
+                && jwtService.isTokenValid(token, userDetails.getUsername())) {
+
+            UsernamePasswordAuthenticationToken authentication =
+                    new UsernamePasswordAuthenticationToken(
+                            userDetails,
+                            null,
+                            userDetails.getAuthorities()
+                    );
+
+            SecurityContextHolder.getContext()
+                    .setAuthentication(authentication);
+        }
 
         filterChain.doFilter(request, response);
     }
