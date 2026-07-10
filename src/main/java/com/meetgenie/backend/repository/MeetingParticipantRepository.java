@@ -15,8 +15,5 @@ public interface MeetingParticipantRepository
 
     List<MeetingParticipant> findByUser(User user);
 
-    Optional<MeetingParticipant> findByMeetingAndUser(
-            Meeting meeting,
-            User user
-    );
+    Optional<MeetingParticipant> findByMeetingAndUser(Meeting meeting, User user);
 }

@@ -6,6 +6,10 @@ import com.meetgenie.backend.service.MeetingService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 import com.meetgenie.backend.dto.MeetingResponse;
+import com.meetgenie.backend.dto.JoinMeetingRequest;
+import jakarta.validation.Valid;
+import com.meetgenie.backend.dto.LeaveMeetingRequest;
+import jakarta.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -35,5 +39,19 @@ public class MeetingController {
             @PathVariable String meetingCode) {
 
         return meetingService.getMeetingByCode(meetingCode);
+    }
+
+    @PostMapping("/join")
+    public ApiResponse joinMeeting(
+            @Valid @RequestBody JoinMeetingRequest request) {
+
+        return meetingService.joinMeeting(request);
+    }
+
+    @PostMapping("/leave")
+    public ApiResponse leaveMeeting(
+            @Valid @RequestBody LeaveMeetingRequest request) {
+
+        return meetingService.leaveMeeting(request);
     }
 }

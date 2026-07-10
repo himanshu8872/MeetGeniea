@@ -45,4 +45,23 @@ public class GlobalExceptionHandler {
                 .body(response);
     }
 
+    @ExceptionHandler(AlreadyJoinedMeetingException.class)
+    public ResponseEntity<ApiResponse> handleAlreadyJoinedMeeting(
+            AlreadyJoinedMeetingException ex) {
+
+        ApiResponse response = new ApiResponse(false, ex.getMessage());
+
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(response);
+    }
+
+    @ExceptionHandler(ParticipantNotFoundException.class)
+    public ResponseEntity<ApiResponse> handleParticipantNotFound(
+            ParticipantNotFoundException ex) {
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ApiResponse(false, ex.getMessage()));
+    }
+
 }
